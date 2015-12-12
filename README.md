@@ -3,7 +3,7 @@
 
 Creating abstract art by evolving neural networks in Javascript.
 
-![example](https://raw.githubusercontent.com/hardmaru/write-rnn-tensorflow/master/example.svg)
+![example](https://cdn.rawgit.com/hardmaru/write-rnn-tensorflow/master/example.svg)
 
 I tried to implement the random handwriting generation portion of Alex Graves' [paper](http://arxiv.org/abs/1308.0850).
 
