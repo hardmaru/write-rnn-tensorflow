@@ -62,11 +62,11 @@ draw_strokes_pdf(strokes, params, factor=8, svg_filename = 'sample.pdf.svg')
 
 ```
 
-![example1a](https://raw.githubusercontent.com/hardmaru/write-rnn-tensorflow/master/example1.normal.svg)
-![example1b](https://raw.githubusercontent.com/hardmaru/write-rnn-tensorflow/master/example1.color.svg)
-![example1c](https://raw.githubusercontent.com/hardmaru/write-rnn-tensorflow/master/example1.multi_color.svg)
-![example1d](https://raw.githubusercontent.com/hardmaru/write-rnn-tensorflow/master/example1.eos_pdf.svg)
-![example1e](https://raw.githubusercontent.com/hardmaru/write-rnn-tensorflow/master/example1.pdf.svg)
+![example1a](https://cdn.rawgit.com/hardmaru/write-rnn-tensorflow/master/example1.normal.svg)
+![example1b](https://cdn.rawgit.com/hardmaru/write-rnn-tensorflow/master/example1.color.svg)
+![example1c](https://cdn.rawgit.com/hardmaru/write-rnn-tensorflow/master/example1.multi_color.svg)
+![example1d](https://cdn.rawgit.com/hardmaru/write-rnn-tensorflow/master//example1.eos_pdf.svg)
+![example1e](https://cdn.rawgit.com/hardmaru/write-rnn-tensorflow/master/example1.pdf.svg)
 
 Have fun-
 
