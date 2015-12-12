@@ -1,9 +1,9 @@
 
 ## Generative Handwriting Demo using TensorFlow
 
-![example](https://cdn.rawgit.com/hardmaru/write-rnn-tensorflow/master/example.svg)
+![example](https://cdn.rawgit.com/hardmaru/write-rnn-tensorflow/master/svg/example.svg)
 
-![example](https://cdn.rawgit.com/hardmaru/write-rnn-tensorflow/master/many_examples.svg)
+![example](https://cdn.rawgit.com/hardmaru/write-rnn-tensorflow/master/svg/many_examples.svg)
 
 An attempt to implement the random handwriting generation portion of Alex Graves' [paper](http://arxiv.org/abs/1308.0850).
 
@@ -62,11 +62,11 @@ draw_strokes_pdf(strokes, params, factor=8, svg_filename = 'sample.pdf.svg')
 
 ```
 
-![example1a](https://cdn.rawgit.com/hardmaru/write-rnn-tensorflow/master/example1.normal.svg)
-![example1b](https://cdn.rawgit.com/hardmaru/write-rnn-tensorflow/master/example1.color.svg)
-![example1c](https://cdn.rawgit.com/hardmaru/write-rnn-tensorflow/master/example1.multi_color.svg)
-![example1d](https://cdn.rawgit.com/hardmaru/write-rnn-tensorflow/master//example1.eos_pdf.svg)
-![example1e](https://cdn.rawgit.com/hardmaru/write-rnn-tensorflow/master/example1.pdf.svg)
+![example1a](https://cdn.rawgit.com/hardmaru/write-rnn-tensorflow/master/svg/example1.normal.svg)
+![example1b](https://cdn.rawgit.com/hardmaru/write-rnn-tensorflow/master/svg/example1.color.svg)
+![example1c](https://cdn.rawgit.com/hardmaru/write-rnn-tensorflow/master/svg/example1.multi_color.svg)
+![example1d](https://cdn.rawgit.com/hardmaru/write-rnn-tensorflow/master/svg/example1.eos_pdf.svg)
+![example1e](https://cdn.rawgit.com/hardmaru/write-rnn-tensorflow/master/svg/example1.pdf.svg)
 
 Have fun-
 
