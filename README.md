@@ -22,7 +22,7 @@ cPickle
 
 ### Training
 
-You will need permission from [these wonderful people](http://www.iam.unibe.ch/fki/databases/iam-handwriting-database) people to get the IAM Handwriting data.  Unzip `lineStrokes-all.tar.gz` into the data subdirectory, so that you end up with `data/lineStrokes/a01`, `data/lineStrokes/a01`, etc.  Afterwards, running `python train.py` will start the training process.
+You will need permission from [these wonderful people](http://www.iam.unibe.ch/fki/databases/iam-handwriting-database) people to get the IAM Handwriting data.  Unzip `lineStrokes-all.tar.gz` into the data subdirectory, so that you end up with `data/lineStrokes/a01`, `data/lineStrokes/a02`, etc.  Afterwards, running `python train.py` will start the training process.
 
 A number of flags can be set for training if you wish to experiment with the parameters.  The default values are in `train.py`
 
