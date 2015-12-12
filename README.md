@@ -1,7 +1,5 @@
 
-# Generative Handwriting Demo using TensorFlow
-
-Creating abstract art by evolving neural networks in Javascript.
+## Generative Handwriting Demo using TensorFlow
 
 ![example](https://cdn.rawgit.com/hardmaru/write-rnn-tensorflow/master/example.svg)
 
