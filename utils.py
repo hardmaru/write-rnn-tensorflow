@@ -208,7 +208,7 @@ class DataLoader():
 
     # build stroke database of every xml file inside iam database
     strokes = []
-    for i in range(10): #len(filelist)
+    for i in range(len(filelist)):
       if (filelist[i][-3:] == 'xml'):
         print 'processing '+filelist[i]
         strokes.append(convert_stroke_to_array(getStrokes(filelist[i])))
