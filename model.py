@@ -44,10 +44,10 @@ class Model():
     inputs = tf.split(1, args.seq_length, self.input_data)
     inputs = [tf.squeeze(input_, [1]) for input_ in inputs]
 
-    outputs, states = seq2seq.rnn_decoder(inputs, self.initial_state, cell, loop_function=None, scope='rnnlm')
+    outputs, last_state = seq2seq.rnn_decoder(inputs, self.initial_state, cell, loop_function=None, scope='rnnlm')
     output = tf.reshape(tf.concat(1, outputs), [-1, args.rnn_size])
     output = tf.nn.xw_plus_b(output, output_w, output_b)
-    self.final_state = states[-1]
+    self.final_state = last_state
 
     # reshape target data so that it is compatible with prediction shape
     flat_target_data = tf.reshape(self.target_data,[-1, 3])
