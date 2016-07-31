@@ -1,6 +1,4 @@
 import tensorflow as tf
-from tensorflow.models.rnn import rnn_cell
-from tensorflow.models.rnn import seq2seq
 
 import numpy as np
 import random
@@ -13,20 +11,20 @@ class Model():
       args.seq_length = 1
 
     if args.model == 'rnn':
-      cell_fn = rnn_cell.BasicRNNCell
+      cell_fn = tf.nn.rnn_cell.BasicRNNCell
     elif args.model == 'gru':
-      cell_fn = rnn_cell.GRUCell
+      cell_fn = tf.nn.rnn_cell.GRUCell
     elif args.model == 'lstm':
-      cell_fn = rnn_cell.BasicLSTMCell
+      cell_fn = tf.nn.rnn_cell.BasicLSTMCell
     else:
       raise Exception("model type not supported: {}".format(args.model))
 
     cell = cell_fn(args.rnn_size)
 
-    cell = rnn_cell.MultiRNNCell([cell] * args.num_layers)
+    cell = tf.nn.rnn_cell.MultiRNNCell([cell] * args.num_layers)
 
     if (infer == False and args.keep_prob < 1): # training mode
-      cell = rnn_cell.DropoutWrapper(cell, output_keep_prob = args.keep_prob)
+      cell = tf.nn.rnn_cell.DropoutWrapper(cell, output_keep_prob = args.keep_prob)
 
     self.cell = cell
 
@@ -44,7 +42,7 @@ class Model():
     inputs = tf.split(1, args.seq_length, self.input_data)
     inputs = [tf.squeeze(input_, [1]) for input_ in inputs]
 
-    outputs, last_state = seq2seq.rnn_decoder(inputs, self.initial_state, cell, loop_function=None, scope='rnnlm')
+    outputs, last_state = tf.nn.seq2seq.rnn_decoder(inputs, self.initial_state, cell, loop_function=None, scope='rnnlm')
     output = tf.reshape(tf.concat(1, outputs), [-1, args.rnn_size])
     output = tf.nn.xw_plus_b(output, output_w, output_b)
     self.final_state = last_state
