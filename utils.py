@@ -1,5 +1,5 @@
 import os
-import cPickle
+import pickle
 import numpy as np
 import xml.etree.ElementTree as ET
 import random
@@ -170,7 +170,7 @@ class DataLoader():
     raw_data_dir = self.data_dir+"/lineStrokes"
 
     if not (os.path.exists(data_file)) :
-        print "creating training data cpkl file from raw source"
+        print("creating training data pkl file from raw source")
         self.preprocess(raw_data_dir, data_file)
 
     self.load_preprocessed(data_file)
@@ -243,7 +243,7 @@ class DataLoader():
     strokes = []
     for i in range(len(filelist)):
       if (filelist[i][-3:] == 'xml'):
-        print 'processing '+filelist[i]
+        print('processing '+filelist[i])
         strokes.append(convert_stroke_to_array(getStrokes(filelist[i])))
 
     f = open(data_file,"wb")

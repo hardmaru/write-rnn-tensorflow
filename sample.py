@@ -3,7 +3,7 @@ import tensorflow as tf
 
 import time
 import os
-import cPickle
+import pickle
 import argparse
 
 from utils import *
@@ -33,7 +33,7 @@ sess = tf.InteractiveSession()
 saver = tf.train.Saver(tf.all_variables())
 
 ckpt = tf.train.get_checkpoint_state('save')
-print "loading model: ",ckpt.model_checkpoint_path
+print("loading model: ", ckpt.model_checkpoint_path)
 
 saver.restore(sess, ckpt.model_checkpoint_path)
 
