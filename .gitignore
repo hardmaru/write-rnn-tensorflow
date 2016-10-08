@@ -89,4 +89,4 @@ ENV/
 .ropeproject
 
 # SVG
-.svg
+*.svg
