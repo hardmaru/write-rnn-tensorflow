@@ -138,7 +138,7 @@ class Model():
         accumulate += pdf[i]
         if (accumulate >= x):
           return i
-      print 'error with sampling ensemble'
+      print('error with sampling ensemble')
       return -1
 
     def sample_gaussian_2d(mu1, mu2, s1, s2, rho):
@@ -154,7 +154,7 @@ class Model():
     strokes = np.zeros((num, 3), dtype=np.float32)
     mixture_params = []
 
-    for i in xrange(num):
+    for i in range(num):
 
       feed = {self.input_data: prev_x, self.initial_state:prev_state}
 
