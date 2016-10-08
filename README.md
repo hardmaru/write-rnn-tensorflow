@@ -11,7 +11,7 @@ See my blog post at [blog.otoro.net](http://blog.otoro.net/2015/12/12/handwritin
 
 ### How to use
 
-I tested the implementation on TensorFlow 0.50.  I also used the following libraries to help:
+I tested the implementation on TensorFlow r0.11 and Pyton 3.  I also used the following libraries to help:
 
 ```
 svgwrite
@@ -19,7 +19,7 @@ IPython.display.SVG
 IPython.display.display
 xml.etree.ElementTree
 argparse
-cPickle
+pickle
 ```
 
 ### Training
