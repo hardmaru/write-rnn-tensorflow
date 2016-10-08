@@ -30,7 +30,8 @@ with open(os.path.join('save', 'config.pkl'), 'rb') as f:
 
 model = Model(saved_args, True)
 sess = tf.InteractiveSession()
-saver = tf.train.Saver(tf.all_variables())
+#saver = tf.train.Saver(tf.all_variables())
+saver = tf.train.Saver()
 
 ckpt = tf.train.get_checkpoint_state('save')
 print("loading model: ", ckpt.model_checkpoint_path)
