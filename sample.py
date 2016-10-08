@@ -25,8 +25,8 @@ parser.add_argument('--scale_factor', type=int, default=10,
                    help='factor to scale down by for svg output.  smaller means bigger output')
 sample_args = parser.parse_args()
 
-with open(os.path.join('save', 'config.pkl')) as f:
-    saved_args = cPickle.load(f)
+with open(os.path.join('save', 'config.pkl'), 'rb') as f:
+    saved_args = pickle.load(f)
 
 model = Model(saved_args, True)
 sess = tf.InteractiveSession()
