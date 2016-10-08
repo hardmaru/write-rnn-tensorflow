@@ -138,7 +138,7 @@ class Model():
         accumulate += pdf[i]
         if (accumulate >= x):
           return i
-      print 'error with sampling ensemble'
+      print('error with sampling ensemble')
       return -1
 
     def sample_gaussian_2d(mu1, mu2, s1, s2, rho):
