@@ -154,7 +154,7 @@ class Model():
     strokes = np.zeros((num, 3), dtype=np.float32)
     mixture_params = []
 
-    for i in xrange(num):
+    for i in range(num):
 
       feed = {self.input_data: prev_x, self.initial_state:prev_state}
 

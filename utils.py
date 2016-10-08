@@ -14,7 +14,7 @@ def get_bounds(data, factor):
     
   abs_x = 0
   abs_y = 0
-  for i in xrange(len(data)):
+  for i in range(len(data)):
     x = float(data[i,0])/factor
     y = float(data[i,1])/factor
     abs_x += x
@@ -42,7 +42,7 @@ def draw_strokes(data, factor=10, svg_filename = 'sample.svg'):
     
   command = "m"
 
-  for i in xrange(len(data)):
+  for i in range(len(data)):
     if (lift_pen == 1):
       command = "m"
     elif (command != "l"):
@@ -64,7 +64,7 @@ def draw_strokes(data, factor=10, svg_filename = 'sample.svg'):
 
 def draw_strokes_eos_weighted(stroke, param, factor=10, svg_filename = 'sample_eos.svg'):
   c_data_eos = np.zeros((len(stroke), 3))
-  for i in xrange(len(param)):
+  for i in range(len(param)):
     c_data_eos[i, :] = (1-param[i][6][0])*225 # make color gray scale, darker = more likely to eos
   draw_strokes_custom_color(stroke, factor = factor, svg_filename = svg_filename, color_data = c_data_eos, stroke_width = 3)
 
@@ -72,7 +72,7 @@ def draw_strokes_random_color(stroke, factor=10, svg_filename = 'sample_random_c
   c_data = np.array(np.random.rand(len(stroke), 3)*240, dtype=np.uint8)
   if per_stroke_mode:
     switch_color = False
-    for i in xrange(len(stroke)):
+    for i in range(len(stroke)):
       if switch_color == False and i > 0:
         c_data[i] = c_data[i-1]
       if stroke[i, 2] < 1: # same strike
@@ -92,7 +92,7 @@ def draw_strokes_custom_color(data, factor=10, svg_filename = 'test.svg', color_
   abs_x = 25 - min_x 
   abs_y = 25 - min_y
 
-  for i in xrange(len(data)):
+  for i in range(len(data)):
 
     x = float(data[i,0])/factor
     y = float(data[i,1])/factor
@@ -131,12 +131,12 @@ def draw_strokes_pdf(data, param, factor=10, svg_filename = 'sample_pdf.svg'):
 
   num_mixture = len(param[0][0])
 
-  for i in xrange(len(data)):
+  for i in range(len(data)):
 
     x = float(data[i,0])/factor
     y = float(data[i,1])/factor
 
-    for k in xrange(num_mixture):
+    for k in range(num_mixture):
       pi = param[i][0][k]
       if pi > 0.01: # optimisation, ignore pi's less than 1% chance
         mu1 = param[i][1][k]
@@ -277,7 +277,7 @@ class DataLoader():
     # returns a randomised, seq_length sized portion of the training data
     x_batch = []
     y_batch = []
-    for i in xrange(self.batch_size):
+    for i in range(self.batch_size):
       data = self.data[self.pointer]
       n_batch = int(len(data)/((self.seq_length+2))) # number of equiv batches this datapoint is worth
       idx = random.randint(0, len(data)-self.seq_length-2)
