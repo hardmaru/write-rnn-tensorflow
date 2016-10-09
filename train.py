@@ -61,14 +61,17 @@ def train(args):
                 feed = {model.input_data: x, model.target_data: y, model.initial_state: state}
                 train_loss, state, _ = sess.run([model.cost, model.final_state, model.train_op], feed)
                 end = time.time()
-                print "{}/{} (epoch {}), train_loss = {:.3f}, time/batch = {:.3f}" \
-                    .format(e * data_loader.num_batches + b,
-                            args.num_epochs * data_loader.num_batches,
-                            e, train_loss, end - start)
+                print(
+                    "{}/{} (epoch {}), train_loss = {:.3f}, time/batch = {:.3f}"  \
+                    .format(
+                        e * data_loader.num_batches + b,
+                        args.num_epochs * data_loader.num_batches,
+                        e, 
+                        train_loss, end - start))
                 if (e * data_loader.num_batches + b) % args.save_every == 0 and ((e * data_loader.num_batches + b) > 0):
                     checkpoint_path = os.path.join('save', 'model.ckpt')
                     saver.save(sess, checkpoint_path, global_step = e * data_loader.num_batches + b)
-                    print "model saved to {}".format(checkpoint_path)
+                    print("model saved to {}".format(checkpoint_path))
 
 if __name__ == '__main__':
   main()
