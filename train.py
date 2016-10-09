@@ -43,7 +43,7 @@ def main():
 def train(args):
     data_loader = DataLoader(args.batch_size, args.seq_length, args.data_scale)
 
-    with open(os.path.join('save', 'config.pkl'), 'w') as f:
+    with open(os.path.join('save', 'config.pkl'), 'wb') as f:
         pickle.dump(args, f)
 
     model = Model(args)
@@ -51,11 +51,11 @@ def train(args):
     with tf.Session() as sess:
         tf.initialize_all_variables().run()
         saver = tf.train.Saver(tf.all_variables())
-        for e in xrange(args.num_epochs):
+        for e in range(args.num_epochs):
             sess.run(tf.assign(model.lr, args.learning_rate * (args.decay_rate ** e)))
             data_loader.reset_batch_pointer()
             state = model.initial_state.eval()
-            for b in xrange(data_loader.num_batches):
+            for b in range(data_loader.num_batches):
                 start = time.time()
                 x, y = data_loader.next_batch()
                 feed = {model.input_data: x, model.target_data: y, model.initial_state: state}
