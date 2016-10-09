@@ -4,7 +4,7 @@ import tensorflow as tf
 import argparse
 import time
 import os
-import cPickle
+import pickle
 
 from utils import DataLoader
 from model import Model
@@ -44,7 +44,7 @@ def train(args):
     data_loader = DataLoader(args.batch_size, args.seq_length, args.data_scale)
 
     with open(os.path.join('save', 'config.pkl'), 'w') as f:
-        cPickle.dump(args, f)
+        pickle.dump(args, f)
 
     model = Model(args)
 
