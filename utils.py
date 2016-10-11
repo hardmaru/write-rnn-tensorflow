@@ -247,13 +247,13 @@ class DataLoader():
         strokes.append(convert_stroke_to_array(getStrokes(filelist[i])))
 
     f = open(data_file,"wb")
-    cPickle.dump(strokes, f, protocol=2)
+    pickle.dump(strokes, f, protocol=2)
     f.close()
 
 
   def load_preprocessed(self, data_file):
     f = open(data_file,"rb")
-    self.raw_data = cPickle.load(f)
+    self.raw_data = pickle.load(f)
     f.close()
 
     # goes thru the list, and only keeps the text entries that have more than seq_length points

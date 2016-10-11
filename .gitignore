@@ -90,3 +90,6 @@ ENV/
 
 # SVG
 *.svg
+
+# training data folder
+data/
