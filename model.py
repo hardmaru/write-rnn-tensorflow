@@ -19,9 +19,12 @@ class Model():
     else:
       raise Exception("model type not supported: {}".format(args.model))
 
-    cell = cell_fn(args.rnn_size)
+    cell = cell_fn(args.rnn_size, state_is_tuple=False)
 
-    cell = tf.nn.rnn_cell.MultiRNNCell([cell] * args.num_layers)
+    cell = tf.nn.rnn_cell.MultiRNNCell(
+            [cell] * args.num_layers,
+            state_is_tuple=False
+        )
 
     if (infer == False and args.keep_prob < 1): # training mode
       cell = tf.nn.rnn_cell.DropoutWrapper(cell, output_keep_prob = args.keep_prob)
