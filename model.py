@@ -102,7 +102,7 @@ class Model():
       max_pi = tf.reduce_max(z_pi, 1, keep_dims=True)
       z_pi = tf.sub(z_pi, max_pi)
       z_pi = tf.exp(z_pi)
-      normalize_pi = tf.inv(tf.reduce_sum(z_pi, 1, keep_dims=True))
+      normalize_pi = tf.reciprocal(tf.reduce_sum(z_pi, 1, keep_dims=True))
       z_pi = tf.mul(normalize_pi, z_pi)
 
       # exponentiate the sigmas and also make corr between -1 and 1.
