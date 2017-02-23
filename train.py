@@ -25,6 +25,8 @@ def main():
                      help='number of epochs')
   parser.add_argument('--save_every', type=int, default=500,
                      help='save frequency')
+  parser.add_argument('--model_dir', type=str, default='save',
+                     help='directory to save model to')
   parser.add_argument('--grad_clip', type=float, default=10.,
                      help='clip gradients at this value')
   parser.add_argument('--learning_rate', type=float, default=0.005,
@@ -43,7 +45,10 @@ def main():
 def train(args):
     data_loader = DataLoader(args.batch_size, args.seq_length, args.data_scale)
 
-    with open(os.path.join('save', 'config.pkl'), 'wb') as f:
+    if args.model_dir != '' and not os.path.exists(args.model_dir):
+      os.makedirs(args.model_dir)
+
+    with open(os.path.join(args.model_dir, 'config.pkl'), 'wb') as f:
         pickle.dump(args, f)
 
     model = Model(args)
@@ -72,7 +77,7 @@ def train(args):
                         e, 
                         train_loss, valid_loss, end - start))
                 if (e * data_loader.num_batches + b) % args.save_every == 0 and ((e * data_loader.num_batches + b) > 0):
-                    checkpoint_path = os.path.join('save', 'model.ckpt')
+                    checkpoint_path = os.path.join(args.model_dir, 'model.ckpt')
                     saver.save(sess, checkpoint_path, global_step = e * data_loader.num_batches + b)
                     print("model saved to {}".format(checkpoint_path))
 

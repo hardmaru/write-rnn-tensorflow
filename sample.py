@@ -23,9 +23,11 @@ parser.add_argument('--sample_length', type=int, default=800,
                    help='number of strokes to sample')
 parser.add_argument('--scale_factor', type=int, default=10,
                    help='factor to scale down by for svg output.  smaller means bigger output')
+parser.add_argument('--model_dir', type=str, default='save',
+                   help='directory to save model to')
 sample_args = parser.parse_args()
 
-with open(os.path.join('save', 'config.pkl'), 'rb') as f:
+with open(os.path.join(sample_args.model_dir, 'config.pkl'), 'rb') as f:
     saved_args = pickle.load(f)
 
 model = Model(saved_args, True)
@@ -33,7 +35,7 @@ sess = tf.InteractiveSession()
 #saver = tf.train.Saver(tf.all_variables())
 saver = tf.train.Saver()
 
-ckpt = tf.train.get_checkpoint_state('save')
+ckpt = tf.train.get_checkpoint_state(sample_args.model_dir)
 print("loading model: ", ckpt.model_checkpoint_path)
 
 saver.restore(sess, ckpt.model_checkpoint_path)
