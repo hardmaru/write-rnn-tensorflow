@@ -54,20 +54,23 @@ def train(args):
         for e in range(args.num_epochs):
             sess.run(tf.assign(model.lr, args.learning_rate * (args.decay_rate ** e)))
             data_loader.reset_batch_pointer()
+            v_x, v_y = data_loader.validation_data()
+            valid_feed = {model.input_data: v_x, model.target_data: v_y, model.initial_state: model.initial_state.eval()}
             state = model.initial_state.eval()
             for b in range(data_loader.num_batches):
                 start = time.time()
                 x, y = data_loader.next_batch()
                 feed = {model.input_data: x, model.target_data: y, model.initial_state: state}
                 train_loss, state, _ = sess.run([model.cost, model.final_state, model.train_op], feed)
+                valid_loss, = sess.run([model.cost], valid_feed)
                 end = time.time()
                 print(
-                    "{}/{} (epoch {}), train_loss = {:.3f}, time/batch = {:.3f}"  \
+                    "{}/{} (epoch {}), train_loss = {:.3f}, valid_loss = {:.3f}, time/batch = {:.3f}"  \
                     .format(
                         e * data_loader.num_batches + b,
                         args.num_epochs * data_loader.num_batches,
                         e, 
-                        train_loss, end - start))
+                        train_loss, valid_loss, end - start))
                 if (e * data_loader.num_batches + b) % args.save_every == 0 and ((e * data_loader.num_batches + b) > 0):
                     checkpoint_path = os.path.join('save', 'model.ckpt')
                     saver.save(sess, checkpoint_path, global_step = e * data_loader.num_batches + b)

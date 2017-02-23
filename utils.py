@@ -258,8 +258,11 @@ class DataLoader():
 
     # goes thru the list, and only keeps the text entries that have more than seq_length points
     self.data = []
+    self.valid_data =[]
     counter = 0
 
+    # every 1 in 20 (5%) will be used for validation data
+    cur_data_counter = 0
     for data in self.raw_data:
       if len(data) > (self.seq_length+2):
         # removes large gaps from the data
@@ -267,11 +270,27 @@ class DataLoader():
         data = np.maximum(data, -self.limit)
         data = np.array(data,dtype=np.float32)
         data[:,0:2] /= self.scale_factor
-        self.data.append(data)
-        counter += int(len(data)/((self.seq_length+2))) # number of equiv batches this datapoint is worth
+        cur_data_counter = cur_data_counter + 1
+        if cur_data_counter % 20 == 0:
+          self.valid_data.append(data)
+        else:
+          self.data.append(data)
+          counter += int(len(data)/((self.seq_length+2))) # number of equiv batches this datapoint is worth
 
+    print("train data: {}, valid data: {}".format(len(self.data), len(self.valid_data)))
     # minus 1, since we want the ydata to be a shifted version of x data
     self.num_batches = int(counter / self.batch_size)
+
+  def validation_data(self):
+    # returns validation data
+    x_batch = []
+    y_batch = []
+    for i in range(self.batch_size):
+      data = self.valid_data[i%len(self.valid_data)]
+      idx = 0
+      x_batch.append(np.copy(data[idx:idx+self.seq_length]))
+      y_batch.append(np.copy(data[idx+1:idx+self.seq_length+1]))
+    return x_batch, y_batch
 
   def next_batch(self):
     # returns a randomised, seq_length sized portion of the training data
