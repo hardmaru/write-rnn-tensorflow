@@ -63,7 +63,7 @@ def freeze_and_save_graph(sess, folder, out_nodes, as_text=False):
     
 
 if(sample_args.freeze_graph):
-    freeze_and_save_graph(sess, sample_args.model_dir, ['data_out', 'state_out'], False)
+    freeze_and_save_graph(sess, sample_args.model_dir, ['data_out_mdn', 'data_out_eos', 'state_out'], False)
 
 [strokes, params] = sample_stroke()
 

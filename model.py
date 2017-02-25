@@ -117,17 +117,18 @@ class Model():
     
     # I could put all of these in a single tensor for reading out, but this is more human readable
     data_out_pi = tf.identity(o_pi, "data_out_pi");
-    data_out_mu1 = tf.identity(o_pi, "data_out_mu1");
-    data_out_mu2 = tf.identity(o_pi, "data_out_mu2");
-    data_out_sigma1 = tf.identity(o_pi, "data_out_sigma1");
-    data_out_sigma2 = tf.identity(o_pi, "data_out_sigma2");
-    data_out_corr = tf.identity(o_pi, "data_out_corr");
-    data_out_eos = tf.identity(o_pi, "data_out_eos");
+    data_out_mu1 = tf.identity(o_mu1, "data_out_mu1");
+    data_out_mu2 = tf.identity(o_mu2, "data_out_mu2");
+    data_out_sigma1 = tf.identity(o_sigma1, "data_out_sigma1");
+    data_out_sigma2 = tf.identity(o_sigma2, "data_out_sigma2");
+    data_out_corr = tf.identity(o_corr, "data_out_corr");
+    data_out_eos = tf.identity(o_eos, "data_out_eos");
                               
-    # sticking them all in one op anyway, makes it easier for freezing the graph later                          
+    # sticking them all (except eos) in one op anyway, makes it easier for freezing the graph later                          
     # IMPORTANT, this needs to stack the named ops above (data_out_XXX), not the prev ops (o_XXX)
     # otherwise when I freeze the graph up to this point, the named versions will be cut
-    data_out = tf.stack([data_out_pi, data_out_mu1, data_out_mu2, data_out_sigma1, data_out_sigma2, data_out_corr, data_out_eos], name="data_out")                     
+    # eos is diff size to others, so excluding that
+    data_out_mdn = tf.identity([data_out_pi, data_out_mu1, data_out_mu2, data_out_sigma1, data_out_sigma2, data_out_corr], name="data_out_mdn")
 
     self.pi = o_pi
     self.mu1 = o_mu1
