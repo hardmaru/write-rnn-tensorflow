@@ -124,6 +124,8 @@ class Model():
 
     lossfunc = get_lossfunc(o_pi, o_mu1, o_mu2, o_sigma1, o_sigma2, o_corr, o_eos, x1_data, x2_data, eos_data)
     self.cost = lossfunc / (args.batch_size * args.seq_length)
+    
+    tf.summary.scalar('loss', self.cost) 
 
     self.lr = tf.Variable(0.0, trainable=False)
     tvars = tf.trainable_variables()

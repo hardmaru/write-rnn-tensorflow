@@ -54,6 +54,9 @@ def train(args):
     model = Model(args)
 
     with tf.Session() as sess:
+        merged_summaries = tf.summary.merge_all() 
+        summary_writer = tf.summary.FileWriter(os.path.join(args.model_dir, 'log'), sess.graph) 
+        
         tf.global_variables_initializer().run()
         saver = tf.train.Saver(tf.global_variables())
         for e in range(args.num_epochs):
@@ -66,7 +69,8 @@ def train(args):
                 start = time.time()
                 x, y = data_loader.next_batch()
                 feed = {model.input_data: x, model.target_data: y, model.initial_state: state}
-                train_loss, state, _ = sess.run([model.cost, model.final_state, model.train_op], feed)
+                summary, train_loss, state, _ = sess.run([merged_summaries, model.cost, model.final_state, model.train_op], feed) 
+                summary_writer.add_summary(summary, e * data_loader.num_batches + b)                 
                 valid_loss, = sess.run([model.cost], valid_feed)
                 end = time.time()
                 print(
