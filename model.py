@@ -31,9 +31,10 @@ class Model():
 
     self.cell = cell
 
-    self.input_data = tf.placeholder(dtype=tf.float32, shape=[None, args.seq_length, 3])
-    self.target_data = tf.placeholder(dtype=tf.float32, shape=[None, args.seq_length, 3])
-    self.initial_state = cell.zero_state(batch_size=args.batch_size, dtype=tf.float32)
+    self.input_data = tf.placeholder(dtype=tf.float32, shape=[None, args.seq_length, 3], name='data_in')
+    self.target_data = tf.placeholder(dtype=tf.float32, shape=[None, args.seq_length, 3], name='targets')
+    zero_state = cell.zero_state(batch_size=args.batch_size, dtype=tf.float32)
+    self.state_in = tf.identity(zero_state, name='state_in')
 
     self.num_mixture = args.num_mixture
     NOUT = 1 + self.num_mixture * 6 # end_of_stroke + prob + 2*(mu + sig) + corr
@@ -45,10 +46,10 @@ class Model():
     inputs = tf.split(axis=1, num_or_size_splits=args.seq_length, value=self.input_data)
     inputs = [tf.squeeze(input_, [1]) for input_ in inputs]
 
-    outputs, last_state = tf.contrib.legacy_seq2seq.rnn_decoder(inputs, self.initial_state, cell, loop_function=None, scope='rnnlm')
+    outputs, state_out = tf.contrib.legacy_seq2seq.rnn_decoder(inputs, self.state_in, cell, loop_function=None, scope='rnnlm')
     output = tf.reshape(tf.concat(axis=1, values=outputs), [-1, args.rnn_size])
     output = tf.nn.xw_plus_b(output, output_w, output_b)
-    self.final_state = last_state
+    self.state_out = tf.identity(state_out, name='state_out')
 
     # reshape target data so that it is compatible with prediction shape
     flat_target_data = tf.reshape(self.target_data,[-1, 3])
@@ -113,6 +114,21 @@ class Model():
       return [z_pi, z_mu1, z_mu2, z_sigma1, z_sigma2, z_corr, z_eos]
 
     [o_pi, o_mu1, o_mu2, o_sigma1, o_sigma2, o_corr, o_eos] = get_mixture_coef(output)
+    
+    # I could put all of these in a single tensor for reading out, but this is more human readable
+    data_out_pi = tf.identity(o_pi, "data_out_pi");
+    data_out_mu1 = tf.identity(o_mu1, "data_out_mu1");
+    data_out_mu2 = tf.identity(o_mu2, "data_out_mu2");
+    data_out_sigma1 = tf.identity(o_sigma1, "data_out_sigma1");
+    data_out_sigma2 = tf.identity(o_sigma2, "data_out_sigma2");
+    data_out_corr = tf.identity(o_corr, "data_out_corr");
+    data_out_eos = tf.identity(o_eos, "data_out_eos");
+                              
+    # sticking them all (except eos) in one op anyway, makes it easier for freezing the graph later                          
+    # IMPORTANT, this needs to stack the named ops above (data_out_XXX), not the prev ops (o_XXX)
+    # otherwise when I freeze the graph up to this point, the named versions will be cut
+    # eos is diff size to others, so excluding that
+    data_out_mdn = tf.identity([data_out_pi, data_out_mu1, data_out_mu2, data_out_sigma1, data_out_sigma2, data_out_corr], name="data_out_mdn")
 
     self.pi = o_pi
     self.mu1 = o_mu1
@@ -162,9 +178,9 @@ class Model():
 
     for i in range(num):
 
-      feed = {self.input_data: prev_x, self.initial_state:prev_state}
+      feed = {self.input_data: prev_x, self.state_in:prev_state}
 
-      [o_pi, o_mu1, o_mu2, o_sigma1, o_sigma2, o_corr, o_eos, next_state] = sess.run([self.pi, self.mu1, self.mu2, self.sigma1, self.sigma2, self.corr, self.eos, self.final_state],feed)
+      [o_pi, o_mu1, o_mu2, o_sigma1, o_sigma2, o_corr, o_eos, next_state] = sess.run([self.pi, self.mu1, self.mu2, self.sigma1, self.sigma2, self.corr, self.eos, self.state_out],feed)
 
       idx = get_pi_idx(random.random(), o_pi[0])
 

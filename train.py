@@ -62,14 +62,14 @@ def train(args):
             sess.run(tf.assign(model.lr, args.learning_rate * (args.decay_rate ** e)))
             data_loader.reset_batch_pointer()
             v_x, v_y = data_loader.validation_data()
-            valid_feed = {model.input_data: v_x, model.target_data: v_y, model.initial_state: model.initial_state.eval()}
-            state = model.initial_state.eval()
+            valid_feed = {model.input_data: v_x, model.target_data: v_y, model.state_in: model.state_in.eval()}
+            state = model.state_in.eval()
             for b in range(data_loader.num_batches):
                 i = e * data_loader.num_batches + b
                 start = time.time()
                 x, y = data_loader.next_batch()
-                feed = {model.input_data: x, model.target_data: y, model.initial_state: state}
-                train_loss_summary, train_loss, state, _ = sess.run([model.train_loss_summary, model.cost, model.final_state, model.train_op], feed) 
+                feed = {model.input_data: x, model.target_data: y, model.state_in: state}
+                train_loss_summary, train_loss, state, _ = sess.run([model.train_loss_summary, model.cost, model.state_out, model.train_op], feed) 
                 summary_writer.add_summary(train_loss_summary, i)                 
                 
                 valid_loss_summary, valid_loss, = sess.run([model.valid_loss_summary, model.cost], valid_feed)
