@@ -11,23 +11,23 @@ class Model():
       args.seq_length = 1
 
     if args.model == 'rnn':
-      cell_fn = tf.nn.rnn_cell.BasicRNNCell
+      cell_fn = tf.contrib.rnn.BasicRNNCell
     elif args.model == 'gru':
-      cell_fn = tf.nn.rnn_cell.GRUCell
+      cell_fn = tf.contrib.rnn.GRUCell
     elif args.model == 'lstm':
-      cell_fn = tf.nn.rnn_cell.BasicLSTMCell
+      cell_fn = tf.contrib.rnn.BasicLSTMCell
     else:
       raise Exception("model type not supported: {}".format(args.model))
 
     cell = cell_fn(args.rnn_size, state_is_tuple=False)
 
-    cell = tf.nn.rnn_cell.MultiRNNCell(
+    cell = tf.contrib.rnn.MultiRNNCell(
             [cell] * args.num_layers,
             state_is_tuple=False
         )
 
     if (infer == False and args.keep_prob < 1): # training mode
-      cell = tf.nn.rnn_cell.DropoutWrapper(cell, output_keep_prob = args.keep_prob)
+      cell = tf.contrib.rnn.DropoutWrapper(cell, output_keep_prob = args.keep_prob)
 
     self.cell = cell
 
@@ -42,17 +42,17 @@ class Model():
       output_w = tf.get_variable("output_w", [args.rnn_size, NOUT])
       output_b = tf.get_variable("output_b", [NOUT])
 
-    inputs = tf.split(1, args.seq_length, self.input_data)
+    inputs = tf.split(axis=1, num_or_size_splits=args.seq_length, value=self.input_data)
     inputs = [tf.squeeze(input_, [1]) for input_ in inputs]
 
-    outputs, last_state = tf.nn.seq2seq.rnn_decoder(inputs, self.initial_state, cell, loop_function=None, scope='rnnlm')
-    output = tf.reshape(tf.concat(1, outputs), [-1, args.rnn_size])
+    outputs, last_state = tf.contrib.legacy_seq2seq.rnn_decoder(inputs, self.initial_state, cell, loop_function=None, scope='rnnlm')
+    output = tf.reshape(tf.concat(axis=1, values=outputs), [-1, args.rnn_size])
     output = tf.nn.xw_plus_b(output, output_w, output_b)
     self.final_state = last_state
 
     # reshape target data so that it is compatible with prediction shape
     flat_target_data = tf.reshape(self.target_data,[-1, 3])
-    [x1_data, x2_data, eos_data] = tf.split(1, 3, flat_target_data)
+    [x1_data, x2_data, eos_data] = tf.split(axis=1, num_or_size_splits=3, value=flat_target_data)
 
     # long method:
     #flat_target_data = tf.split(1, args.seq_length, self.target_data)
@@ -61,13 +61,13 @@ class Model():
 
     def tf_2d_normal(x1, x2, mu1, mu2, s1, s2, rho):
       # eq # 24 and 25 of http://arxiv.org/abs/1308.0850
-      norm1 = tf.sub(x1, mu1)
-      norm2 = tf.sub(x2, mu2)
-      s1s2 = tf.mul(s1, s2)
-      z = tf.square(tf.div(norm1, s1))+tf.square(tf.div(norm2, s2))-2*tf.div(tf.mul(rho, tf.mul(norm1, norm2)), s1s2)
+      norm1 = tf.subtract(x1, mu1)
+      norm2 = tf.subtract(x2, mu2)
+      s1s2 = tf.multiply(s1, s2)
+      z = tf.square(tf.div(norm1, s1))+tf.square(tf.div(norm2, s2))-2*tf.div(tf.multiply(rho, tf.multiply(norm1, norm2)), s1s2)
       negRho = 1-tf.square(rho)
       result = tf.exp(tf.div(-z,2*negRho))
-      denom = 2*np.pi*tf.mul(s1s2, tf.sqrt(negRho))
+      denom = 2*np.pi*tf.multiply(s1s2, tf.sqrt(negRho))
       result = tf.div(result, denom)
       return result
 
@@ -75,11 +75,11 @@ class Model():
       result0 = tf_2d_normal(x1_data, x2_data, z_mu1, z_mu2, z_sigma1, z_sigma2, z_corr)
       # implementing eq # 26 of http://arxiv.org/abs/1308.0850
       epsilon = 1e-20
-      result1 = tf.mul(result0, z_pi)
+      result1 = tf.multiply(result0, z_pi)
       result1 = tf.reduce_sum(result1, 1, keep_dims=True)
       result1 = -tf.log(tf.maximum(result1, 1e-20)) # at the beginning, some errors are exactly zero.
 
-      result2 = tf.mul(z_eos, eos_data) + tf.mul(1-z_eos, 1-eos_data)
+      result2 = tf.multiply(z_eos, eos_data) + tf.multiply(1-z_eos, 1-eos_data)
       result2 = -tf.log(result2)
 
       result = result1 + result2
@@ -91,7 +91,7 @@ class Model():
       # ie, eq 18 -> 23 of http://arxiv.org/abs/1308.0850
       z = output
       z_eos = z[:, 0:1]
-      z_pi, z_mu1, z_mu2, z_sigma1, z_sigma2, z_corr = tf.split(1, 6, z[:, 1:])
+      z_pi, z_mu1, z_mu2, z_sigma1, z_sigma2, z_corr = tf.split(axis=1, num_or_size_splits=6, value=z[:, 1:])
 
       # process output z's into MDN paramters
 
@@ -100,10 +100,10 @@ class Model():
 
       # softmax all the pi's:
       max_pi = tf.reduce_max(z_pi, 1, keep_dims=True)
-      z_pi = tf.sub(z_pi, max_pi)
+      z_pi = tf.subtract(z_pi, max_pi)
       z_pi = tf.exp(z_pi)
       normalize_pi = tf.reciprocal(tf.reduce_sum(z_pi, 1, keep_dims=True))
-      z_pi = tf.mul(normalize_pi, z_pi)
+      z_pi = tf.multiply(normalize_pi, z_pi)
 
       # exponentiate the sigmas and also make corr between -1 and 1.
       z_sigma1 = tf.exp(z_sigma1)
@@ -124,6 +124,9 @@ class Model():
 
     lossfunc = get_lossfunc(o_pi, o_mu1, o_mu2, o_sigma1, o_sigma2, o_corr, o_eos, x1_data, x2_data, eos_data)
     self.cost = lossfunc / (args.batch_size * args.seq_length)
+    
+    self.train_loss_summary = tf.summary.scalar('train_loss', self.cost) 
+    self.valid_loss_summary = tf.summary.scalar('validation_loss', self.cost) 
 
     self.lr = tf.Variable(0.0, trainable=False)
     tvars = tf.trainable_variables()

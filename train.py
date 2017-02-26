@@ -54,8 +54,10 @@ def train(args):
     model = Model(args)
 
     with tf.Session() as sess:
-        tf.initialize_all_variables().run()
-        saver = tf.train.Saver(tf.all_variables())
+        summary_writer = tf.summary.FileWriter(os.path.join(args.model_dir, 'log'), sess.graph) 
+        
+        tf.global_variables_initializer().run()
+        saver = tf.train.Saver(tf.global_variables())
         for e in range(args.num_epochs):
             sess.run(tf.assign(model.lr, args.learning_rate * (args.decay_rate ** e)))
             data_loader.reset_batch_pointer()
@@ -63,16 +65,21 @@ def train(args):
             valid_feed = {model.input_data: v_x, model.target_data: v_y, model.initial_state: model.initial_state.eval()}
             state = model.initial_state.eval()
             for b in range(data_loader.num_batches):
+                i = e * data_loader.num_batches + b
                 start = time.time()
                 x, y = data_loader.next_batch()
                 feed = {model.input_data: x, model.target_data: y, model.initial_state: state}
-                train_loss, state, _ = sess.run([model.cost, model.final_state, model.train_op], feed)
-                valid_loss, = sess.run([model.cost], valid_feed)
+                train_loss_summary, train_loss, state, _ = sess.run([model.train_loss_summary, model.cost, model.final_state, model.train_op], feed) 
+                summary_writer.add_summary(train_loss_summary, i)                 
+                
+                valid_loss_summary, valid_loss, = sess.run([model.valid_loss_summary, model.cost], valid_feed)
+                summary_writer.add_summary(valid_loss_summary, i)                 
+
                 end = time.time()
                 print(
                     "{}/{} (epoch {}), train_loss = {:.3f}, valid_loss = {:.3f}, time/batch = {:.3f}"  \
                     .format(
-                        e * data_loader.num_batches + b,
+                        i,
                         args.num_epochs * data_loader.num_batches,
                         e, 
                         train_loss, valid_loss, end - start))
