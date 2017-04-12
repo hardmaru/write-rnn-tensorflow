@@ -43,9 +43,10 @@ class Model():
       output_w = tf.get_variable("output_w", [args.rnn_size, NOUT])
       output_b = tf.get_variable("output_b", [NOUT])
 
-    inputs = tf.split(axis=1, num_or_size_splits=args.seq_length, value=self.input_data)
-    inputs = [tf.squeeze(input_, [1]) for input_ in inputs]
-
+    # inputs = tf.split(axis=1, num_or_size_splits=args.seq_length, value=self.input_data)
+    # inputs = [tf.squeeze(input_, [1]) for input_ in inputs]
+    inputs = tf.unpack(self.input_data, axis=1)
+    
     outputs, state_out = tf.contrib.legacy_seq2seq.rnn_decoder(inputs, self.state_in, cell, loop_function=None, scope='rnnlm')
     output = tf.reshape(tf.concat(axis=1, values=outputs), [-1, args.rnn_size])
     output = tf.nn.xw_plus_b(output, output_w, output_b)
