@@ -19,12 +19,11 @@ class Model():
     else:
       raise Exception("model type not supported: {}".format(args.model))
 
-    cell = cell_fn(args.rnn_size, state_is_tuple=False)
+    def get_cell():
+      return cell_fn(args.rnn_size, state_is_tuple=False)
 
     cell = tf.contrib.rnn.MultiRNNCell(
-            [cell] * args.num_layers,
-            state_is_tuple=False
-        )
+        [get_cell() for _ in range(args.rnn_size)])
 
     if (infer == False and args.keep_prob < 1): # training mode
       cell = tf.contrib.rnn.DropoutWrapper(cell, output_keep_prob = args.keep_prob)
@@ -45,9 +44,12 @@ class Model():
 
     # inputs = tf.split(axis=1, num_or_size_splits=args.seq_length, value=self.input_data)
     # inputs = [tf.squeeze(input_, [1]) for input_ in inputs]
-    inputs = tf.unpack(self.input_data, axis=1)
+    inputs = tf.unstack(self.input_data, axis=1)
     
-    outputs, state_out = tf.contrib.legacy_seq2seq.rnn_decoder(inputs, self.state_in, cell, loop_function=None, scope='rnnlm')
+    # outputs, state_out = tf.contrib.legacy_seq2seq.rnn_decoder(inputs, self.state_in, cell, loop_function=None, scope='rnnlm')
+    outputs, state_out = tf.contrib.legacy_seq2seq.rnn_decoder(inputs, zero_state, cell, loop_function=None, scope='rnnlm')
+
+
     output = tf.reshape(tf.concat(axis=1, values=outputs), [-1, args.rnn_size])
     output = tf.nn.xw_plus_b(output, output_w, output_b)
     self.state_out = tf.identity(state_out, name='state_out')
