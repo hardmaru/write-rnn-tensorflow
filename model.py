@@ -23,7 +23,7 @@ class Model():
       return cell_fn(args.rnn_size, state_is_tuple=False)
 
     cell = tf.contrib.rnn.MultiRNNCell(
-        [get_cell() for _ in range(args.rnn_size)])
+        [get_cell() for _ in range(args.num_layers)])
 
     if (infer == False and args.keep_prob < 1): # training mode
       cell = tf.contrib.rnn.DropoutWrapper(cell, output_keep_prob = args.keep_prob)
