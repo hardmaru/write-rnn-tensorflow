@@ -65,27 +65,29 @@ def train(args):
             valid_feed = {model.input_data: v_x, model.target_data: v_y, model.state_in: model.state_in.eval()}
             state = model.state_in.eval()
             for b in range(data_loader.num_batches):
-                i = e * data_loader.num_batches + b
+                ith_train_step = e * data_loader.num_batches + b
                 start = time.time()
                 x, y = data_loader.next_batch()
                 feed = {model.input_data: x, model.target_data: y, model.state_in: state}
                 train_loss_summary, train_loss, state, _ = sess.run([model.train_loss_summary, model.cost, model.state_out, model.train_op], feed) 
-                summary_writer.add_summary(train_loss_summary, i)                 
+                summary_writer.add_summary(train_loss_summary, ith_train_step)
                 
                 valid_loss_summary, valid_loss, = sess.run([model.valid_loss_summary, model.cost], valid_feed)
-                summary_writer.add_summary(valid_loss_summary, i)                 
+                summary_writer.add_summary(valid_loss_summary, ith_train_step)
 
                 end = time.time()
                 print(
                     "{}/{} (epoch {}), train_loss = {:.3f}, valid_loss = {:.3f}, time/batch = {:.3f}"  \
                     .format(
-                        i,
+                        ith_train_step,
                         args.num_epochs * data_loader.num_batches,
                         e, 
-                        train_loss, valid_loss, end - start))
-                if (e * data_loader.num_batches + b) % args.save_every == 0 and ((e * data_loader.num_batches + b) > 0):
+                        train_loss,
+                        valid_loss,
+                        end - start))
+                if (ith_train_step % args.save_every == 0) and (ith_train_step > 0):
                     checkpoint_path = os.path.join(args.model_dir, 'model.ckpt')
-                    saver.save(sess, checkpoint_path, global_step = e * data_loader.num_batches + b)
+                    saver.save(sess, checkpoint_path, global_step=ith_train_step)
                     print("model saved to {}".format(checkpoint_path))
 
 if __name__ == '__main__':
