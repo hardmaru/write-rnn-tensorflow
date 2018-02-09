@@ -1,10 +1,12 @@
 import os
 import pickle
-import numpy as np
-import xml.etree.ElementTree as ET
 import random
+import xml.etree.ElementTree as ET
+
+import numpy as np
 import svgwrite
 from IPython.display import SVG, display
+
 
 def get_bounds(data, factor):
   min_x = 0

@@ -1,13 +1,13 @@
-import numpy as np
-import tensorflow as tf
-
 import argparse
-import time
 import os
 import pickle
+import time
 
-from utils import DataLoader
+import tensorflow as tf
+
 from model import Model
+from utils import DataLoader
+
 
 def main():
   parser = argparse.ArgumentParser()

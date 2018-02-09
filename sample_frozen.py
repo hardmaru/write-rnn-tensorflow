@@ -10,21 +10,11 @@ same as sample.py, but:
 - instead of calling model.sample() function, uses own sample() function with named ops
 """
 
-import numpy as np
-import tensorflow as tf
-
-import time
-import os
-import pickle
 import argparse
 
+import tensorflow as tf
+
 from utils import *
-from model import Model
-import random
-
-
-import svgwrite
-from IPython.display import SVG, display
 
 # main code (not in a main function since I want to run this script in IPython as well).
 

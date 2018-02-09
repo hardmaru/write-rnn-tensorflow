@@ -1,7 +1,8 @@
-import tensorflow as tf
+import random
 
 import numpy as np
-import random
+import tensorflow as tf
+
 
 class Model():
   def __init__(self, args, infer=False):

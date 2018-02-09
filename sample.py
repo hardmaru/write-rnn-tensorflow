@@ -1,18 +1,9 @@
-import numpy as np
-import tensorflow as tf
-
-import time
-import os
-import pickle
 import argparse
 
-from utils import *
+import tensorflow as tf
+
 from model import Model
-import random
-
-
-import svgwrite
-from IPython.display import SVG, display
+from utils import *
 
 # main code (not in a main function since I want to run this script in IPython as well).
 
